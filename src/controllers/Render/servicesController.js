@@ -1,4 +1,4 @@
-const services = require("../../services/renderServicesStatus")
+const services = require("../../services/RenderServices/renderServicesStatus")
 
 const servicesController = {
 
