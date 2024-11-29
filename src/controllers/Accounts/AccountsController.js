@@ -2,25 +2,20 @@ const services = require('../../services/Authentication/AuthenticationService')
 
 const accountController = {
 
-    // postNewAccount: async (req, res) => {
+    postNewAccount: async (req, res) => {
+        try {
 
-    //     try {
-    //         const request = services.registerAccount(req.body);
-    //         res.status(201).json({
-    //             status: "account created",
-    //             response: req.body
-    //         });
-    //         console.log("account created!");
+            const result = services.registerAccount(req.body);
+            return res.status(201).json({
+                creationAccountStatus: "201 created",
+                response: req.body
+            });
 
+        } catch (error) {
+            console.log("error on create account" + error.message);
 
-    //     } catch (error) {
-    //         res.status(500).json({
-    //             status: "error on create account",
-    //             error: error
-    //         })
-    //     }
-
-    // }
+        }
+    },
 
 }
 

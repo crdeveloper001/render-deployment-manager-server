@@ -11,5 +11,6 @@ router.get('/v1/AppServices', RenderController.servicesController.getCurrentServ
 /**AUTHENTICATION AND ACCOUNTS ROUTES */
 router.post('/v1/Accounts/NewAccount', authenticationController.authenticationController.postNewAccount)
 router.post('/v1/Accounts/Authentication', authenticationController.authenticationController.postNewAuthentication)
+router.delete('/v1/Accounts/DeleteAccount', authenticationController.authenticationController.deleteAccount)
 
 module.exports = router;

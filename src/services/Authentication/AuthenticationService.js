@@ -6,19 +6,7 @@ const AccountDetails = require('../../schemas/AccountsSchemas/AccountsSchema');
 
 const SECRET = process.env.SECRETKEYAUTH;
 
-const registerAccount = async (information) => {
-    try {
 
-        information._id = new mongoose.Types.ObjectId();
-        // Hash the password before saving
-        const hashedPassword = await bcrypt.hash(information.accountPassword, 10);
-        information.accountPassword = hashedPassword;
-        const account = new AccountDetails(information);
-        return await account.save();
-    } catch (error) {
-        throw new Error(`Error registering account: ${error.message}`);
-    }
-};
 // Function to authenticate a user and generate a token
 const authenticateAccount = async (email, password) => {
     try {
@@ -43,7 +31,6 @@ const authenticateAccount = async (email, password) => {
                 accountEmail: account.accountEmail,
                 accountAliasName: account.accountAliasName,
                 accountPhone: account.accountPhone,
-                accountPassword: account.accountPassword,
                 accountRoleType: account.accountRoleType
             },
             SECRET,
@@ -60,7 +47,6 @@ const authenticateAccount = async (email, password) => {
                 accountEmail: account.accountEmail,
                 accountAliasName: account.accountAliasName,
                 accountPhone: account.accountPhone,
-                accountPassword: account.accountPassword,
                 accountRoleType: account.accountRoleType
             }
         };
@@ -84,8 +70,69 @@ const verifyToken = (req, res, next) => {
         res.status(401).json({ message: "Invalid token" });
     }
 };
+// Function to register an account
+const registerAccount = async (information) => {
+    try {
+        information._id = new mongoose.Types.ObjectId();
+        // Hash the password before saving
+        const hashedPassword = await bcrypt.hash(information.accountPassword, 10);
+        information.accountPassword = hashedPassword;
+        const account = new AccountDetails(information);
+        return await account.save();
+    } catch (error) {
+        throw new Error(`Error registering account: ${error.message}`);
+    }
+};
+
+// Function to update account information
+const updateAccount = async (accountId, updateData) => {
+    try {
+        // Find the account by ID
+        const account = await AccountDetails.findById(accountId);
+        if (!account) {
+            throw new Error("Account not found");
+        }
+
+        // Check if a new password is being provided
+        if (updateData.accountPassword) {
+            // Hash the new password before updating
+            updateData.accountPassword = await bcrypt.hash(updateData.accountPassword, 10);
+        }
+
+        // Update only the fields provided in updateData
+        Object.keys(updateData).forEach((key) => {
+            account[key] = updateData[key];
+        });
+
+        // Save the updated account
+        return await account.save();
+    } catch (error) {
+        throw new Error(`Error updating account: ${error.message}`);
+    }
+};
+
+const deleteAccountById = async (accountId) => {
+    try {
+        const account = await AccountDetails.findById(accountId);
+        if (!account) {
+            throw new Error("Account not found");
+        } else {
+            await account.deleteOne(accountId)
+
+        }
+    } catch (error) {
+        throw new Error("Error on delete account" + error);
+
+    }
+
+
+}
+
+// Export the functions
 module.exports = {
     registerAccount,
     authenticateAccount,
-    verifyToken
+    verifyToken,
+    updateAccount,
+    deleteAccountById
 };

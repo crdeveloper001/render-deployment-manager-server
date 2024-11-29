@@ -29,10 +29,6 @@ mongoose.connect(`${MONGODBURI}`, { dbName: 'CloudAppServicesManagerDB' }).then(
 })
 
 
-
-
-
-
 //dynamic routes
 app.use('/api', myRoutes)
 
